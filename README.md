@@ -1,3 +1,10 @@
-# SelectMixedModels
+## SelectMixedModels
 
-[![Build Status](https://travis-ci.org/ilovealldata/SelectMixedModels.jl.svg?branch=master)](https://travis-ci.org/ilovealldata/SelectMixedModels.jl)
+The package **SelectMixedModels** provides useful functions for model selection in linear mixed effects model (LMM).
+
+This package follows idea and algorithm in the package [**MixedModels**](https://github.com/dmbates/MixedModels.jl) by Prof. D. Bates.
+
+Here is a list of functions avaliable in  **SelectMixedModels**.
+
+* trace of Hat matrix in LMM
+* Conditional AIC
