@@ -1,9 +1,9 @@
 type conAIC <: AIC
-    condlike :: Float64 
-    tracehat :: Float64
-    method   :: ASCIIString
-    corterm  :: Vector
-    value    :: Float64
+    condlike :: float64         #conditional likelihood
+    tracehat :: Float64         # trace of Hat matrix
+    method   :: ASCIIString     # method
+    corterm  :: Vector          # correction term
+    value    :: float64         # conditional AIC
 end
 
 
@@ -13,7 +13,7 @@ function conAIC(m::LinearMixedModel)
     llk = condll(m)
 
     (nn,pp,qq,tt)=size(m)
-    
+
     cr=zeros(Float64,2)
     cr[1]=nn*(nn-pp-1.0)/((nn-pp)*(nn-pp-2.0))
     cr[2]=nn*(pp+1.0)/((nn-pp)*(nn-pp-2.0))
