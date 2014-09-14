@@ -1,9 +1,9 @@
 type conAIC <: AIC
-    condlike :: float64         #conditional likelihood
+    condlike :: Float64         #conditional likelihood
     tracehat :: Float64         # trace of Hat matrix
     method   :: ASCIIString     # method
     corterm  :: Vector          # correction term
-    value    :: float64         # conditional AIC
+    value    :: Float64         # conditional AIC
 end
 
 

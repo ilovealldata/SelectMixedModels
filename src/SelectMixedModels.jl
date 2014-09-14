@@ -7,6 +7,9 @@ module SelectMixedModels
 
 
 export
+    InfoCrit,
+    AIC,
+    BIC,
     conAIC,		# Conditional AIC type
     lmmg,       # fit a linear mixed-effects model (LMM) 
                 # with PLSGeneral type only
