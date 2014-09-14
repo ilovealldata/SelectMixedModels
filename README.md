@@ -13,7 +13,7 @@ Here is a list of functions avaliable in  **SelectMixedModels**.
 
 An example of LMM  is a model fit to the `Dyestuff` data ([lme4 package for R](https://github.com/lme4/lme4))
 
-In `R`, `cAIC` package provides conditional AIC.
+In `R`, `cAIC4` package provides conditional AIC.
 
 ```R
 > library(lme4)
