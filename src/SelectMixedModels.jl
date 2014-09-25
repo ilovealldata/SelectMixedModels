@@ -7,7 +7,9 @@ module SelectMixedModels
 
 
 export
-    conAIC,		# Conditional AIC type
+    conAIC,		# Conditional AIC
+    marAIC,     # marginal AIC
+    marBIC,     # marginal BIC
     lmmg,       # fit a linear mixed-effects model (LMM) 
                 # with PLSGeneral type only
     condll,     # compute conditional likelihood (LMM)
@@ -17,6 +19,7 @@ export
     include("tracehat.jl")
     include("lmmgeneral.jl")
     include("conAIC.jl")
+    include("marIC.jl")
     include("util.jl")
 
 end # module
