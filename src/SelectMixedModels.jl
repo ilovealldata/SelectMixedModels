@@ -7,18 +7,11 @@ module SelectMixedModels
 
 
 export
-    InfoCrit,
-    AIC,
-    BIC,
     conAIC,		# Conditional AIC type
     lmmg,       # fit a linear mixed-effects model (LMM) 
                 # with PLSGeneral type only
     condll,     # compute conditional likelihood (LMM)
     traceHat    # Caculate Trace of Hat matrix in LMM
-
-	abstract InfoCrit
-    abstract AIC <: InfoCrit
-    abstract BIC <: InfoCrit
 
     include("lmmgeneral.jl")
     include("tracehat.jl")

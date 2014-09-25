@@ -1,5 +1,4 @@
- 
-  function lmmg(f::Formula, fr::AbstractDataFrame)
+ function lmmg(f::Formula, fr::AbstractDataFrame)
     mf = ModelFrame(f,fr)
     X = ModelMatrix(mf)
     y = convert(Vector{Float64},DataFrames.model_response(mf))
@@ -45,7 +44,8 @@
     
     LinearMixedModel(false, X, Xs, Xty, map(ztblk,Xs,facs), Zty,
                      map(zeros, u), f, facs, false, map(string,grps),
-                     mf, similar(y), s, u, uβ, y, λ, similar(y))
+                    [zeros(k,k) for k in p], mf, similar(y),
+                     s, u, uβ, y, λ, similar(y))
 end
 
 
