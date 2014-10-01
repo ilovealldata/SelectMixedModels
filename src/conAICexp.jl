@@ -20,37 +20,39 @@ function conAIC(m::LMMScalar1)
   (objectivecon(m)+2.0*rho, rho) 
 end
 
-function conAIC(m::LMMGeneral)
+function conAICb(m::LinearMixedModel)
   n,p,q,k = size(m)
-  k12= m.LambdatZt * sparse(m.X.m)  
-  #Hlinv = inv(hvcat((2,2),m.LambdatZt *m.LambdatZt' +eye(q) ,k12,k12',sparse(m.X.m)'*sparse(m.X.m)))
-  Hlinv = inv([ m.LambdatZt *m.LambdatZt'+eye(q) k12 ; k12' sparse(m.X.m)'*sparse(m.X.m)])
-  rho = trace( vcat(m.LambdatZt,sparse(m.X.m)')*vcat(m.LambdatZt,sparse(m.X.m)')' *Hlinv)
+  spλtZt=sparse(m.s.λtZt)
+  k12= spλtZt * sparse(m.X.m)  
+  #Hlinv = inv(hvcat((2,2),m.s.λtZt *m.s.λtZt' +eye(q) ,k12,k12',sparse(m.X.m)'*sparse(m.X.m)))
+  Hlinv = inv(tril(full([ spλtZt *spλtZt'+speye(q) k12 ; k12' sparse(m.X.m)'*sparse(m.X.m)])))
+  rho = trace( vcat(spλtZt,sparse(m.X.m)')*vcat(spλtZt,sparse(m.X.m)')' *Hlinv)
   #REML
   #rho=(n-p-1.0)*(rho+1.0)/(n-p-2.0) + (p+1.0)/(n-p-2.0)
   #MLE
   rho=n/(n-p-2.0) * ((rho+1) -(rho-p)/(n-p))
-  (objectivecon(m)+2.0*rho, rho) 
+  (-2.0*condll(m)+2.0*rho, rho) 
 end
 
-function conAICa(m::LMMGeneral)
+function conAICa(m::LinearMixedModel)
   n,p,q,k = size(m)
-  #k12= m.LambdatZt * sparse(m.X.m)  
-  #Hlinv = inv(hvcat((2,2),m.LambdatZt *m.LambdatZt' +eye(q) ,k12,k12',sparse(m.X.m)'*sparse(m.X.m)))
-  #Hlinv = inv([ m.LambdatZt *m.LambdatZt'+eye(q) k12 ; k12' sparse(m.X.m)'*sparse(m.X.m)])
-  RZXa = m.LambdatZt * m.X.m
+  #k12= m.s.λtZt * sparse(m.X.m)  
+  #Hlinv = inv(hvcat((2,2),m.s.λtZt *m.s.λtZt' +eye(q) ,k12,k12',sparse(m.X.m)'*sparse(m.X.m)))
+  #Hlinv = inv([ m.s.λtZt *m.s.λtZt'+eye(q) k12 ; k12' sparse(m.X.m)'*sparse(m.X.m)])
+  spλtZt=sparse(m.s.λtZt)
+  RZXa = spλtZt * m.X.m
   for j in 1:size(RZXa,2)
-            permute!(view(RZXa,:,j),m.perm)
-        end
-  RZXa = solve(m.L, RZXa, CHOLMOD_L)
-  Hlinv2=inv(tril(hvcat((2,2),sparse(m.L),RZXa,RZXa',m.RX.UL')))       
+            permute!(view(RZXa,:,j),m.s.perm)
+  end
+  RZXa = Base.LinAlg.CHOLMOD.solve(m.s.L, RZXa, CHOLMOD_L)
+  Hlinv2=inv(tril(hvcat((2,2),sparse(m.s.L),RZXa,RZXa',m.s.RX.UL')))       
   Hlinv= Hlinv2' * Hlinv2 
-  rho = trace( vcat(m.LambdatZt,sparse(m.X.m)')*vcat(m.LambdatZt,sparse(m.X.m)')' *Hlinv)
+  rho = trace( vcat(spλtZt,sparse(m.X.m)')*vcat(spλtZt,sparse(m.X.m)')' *Hlinv)
   #REML
   #rho=(n-p-1.0)*(rho+1.0)/(n-p-2.0) + (p+1.0)/(n-p-2.0)
   #MLE
   rho=n/(n-p-2.0) * ((rho+1) -(rho-p)/(n-p))
-  (objectivecon(m)+2.0*rho, rho) 
+  (-2.0*condll(m)+2.0*rho, rho) 
 end
 
 function objectivecon(m::LinearMixedModel)

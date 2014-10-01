@@ -35,13 +35,14 @@ system.time(print(calAIC.lmer(fm1)))
 
 fm2 <- lmer(Reaction ~ Days + (Days|Subject), sleepstudy,REML=F)
 system.time(print(cAIC(fm2)))
+system.time(print(cAIC(fm2,analytic = FALSE)))
 system.time(print(calAIC.lmer(fm2)))
 
 fm3  <- lmer(y ~ dept*service + (1|s) ,InstEval,REML=F)
 system.time(print(cAIC(fm3)))
 system.time(print(calAIC.lmer(fm3)))
             
-fm4 <- lmer(score ~  (1|lea), Chem97)
+fm4 <- lmer(score ~  (1|lea), Chem97,REML=F)
 system.time(print(cAIC(fm4)))
 system.time(print(calAIC.lmer(fm4)))
 

@@ -15,11 +15,13 @@ export
     condll,     # compute conditional likelihood (LMM)
     traceHat    # Caculate Trace of Hat matrix in LMM
 
+    abstract InfoCrit
+
     include("lmmgeneral.jl")
     include("tracehat.jl")
-    include("lmmgeneral.jl")
-    include("conAIC.jl")
+    include("IC.jl")
     include("marIC.jl")
+    include("conAIC.jl")
     include("util.jl")
 
 end # module
