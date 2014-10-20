@@ -3,30 +3,37 @@
     X = ModelMatrix(mf)
     y = convert(Vector{Float64},DataFrames.model_response(mf))
     Xty = X.m'y
-
+                                        # process the random-effects terms
     retrms = filter(x->Meta.isexpr(x,:call) && x.args[1] == :|, mf.terms.terms)
     length(retrms) > 0 || error("Formula $f has no random-effects terms")
-
-    grps = {t.args[3] for t in retrms}       # expressions for grouping factors
-    facs = {pool(getindex(mf.df,grp)) for grp in grps}
-    l = Int[length(f.pool) for f in facs]
-    if (perm = sortperm(l;rev=true)) != [1:length(grps)]
-        permute!(retrms,perm)
-        permute!(grps,perm)
-        permute!(facs,perm)
-        permute!(l,perm)
-    end
-    Xs = {MixedModels.lhs2mat(t,mf.df)' for t in retrms} # transposed model matrices
+    Xs = [lhs2mat(t,mf.df)' for t in retrms] # transposed model matrices
     p = Int[size(x,1) for x in Xs]
-    λ = {pp == 1 ? MixedModels.PDScalF(1.,1) : 
-                MixedModels.PDLCholF(cholfact(eye(pp),:L)) for pp in p}
-    if length(unique(grps)) < length(grps)
-        grps,Xs,p,λ,facs,l = MixedModels.amalgamate(grps,Xs,p,λ,facs,l)
+    λ = Any[pp == 1 ? PDScalF(1.,1) : PDLCholF(cholfact(eye(pp),:L)) for pp in p]
+    grps = Any[t.args[3] for t in retrms]
+    ugrps = unique(grps)
+    if length(ugrps) < length(grps)     # amalgamate terms with the same grouping factor
+        for g in ugrps
+            ii = [1:length(grps)][grps .== g]
+            length(ii) == 1 && continue
+            iii = copy(ii)
+            i1 = shift!(ii)
+            p[i1] = sum(p[iii])
+            deleteat!(p,ii)
+            Xs[i1] = vcat(Xs[iii]...)
+            deleteat!(Xs,ii)
+            λ[i1] = amalgamate(λ[iii])
+            deleteat!(λ,ii)
+            deleteat!(grps,ii)
+        end
     end
+    facs = [getindex(mf.df,g) for g in ugrps]
+    map!(x->isa(x,PooledDataArray) ? x : pool(x), facs)
+    l = Int[length(f.pool) for f in facs]
+
     q = sum(p .* l)
     uβ = zeros(q + size(X,2))
-    Zty = {zeros(pp,ll) for (pp,ll) in zip(p,l)}
-    u = {}
+    Zty = [zeros(pp,ll) for (pp,ll) in zip(p,l)]
+    u = Any[]
     offset = 0
     for (x,ff,zty) in zip(Xs,facs,Zty)
         push!(u,contiguous_view(uβ, offset, size(zty)))
@@ -37,6 +44,7 @@
             end
         end
     end
+    
     local s
     
     Zt = vcat(map(ztblk,Xs,facs)...)
