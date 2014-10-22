@@ -50,3 +50,5 @@ system.time (fm8 <- lmer(y ~ dept*service + (1|s) + (1|d),InstEval,REML=F))
 system.time(print(cAIC(fm8)))
 system.time(print(calAIC.lmer(fm8)))
 
+fm9 <- lmer(diameter ~ (1|plate) + (1|sample), Penicillin)
+system.time(print(cAIC(fm9)))

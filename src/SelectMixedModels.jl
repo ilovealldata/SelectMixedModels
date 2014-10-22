@@ -17,7 +17,6 @@ export
 
     abstract InfoCrit
 
-    include("lmmgeneral.jl")
     include("tracehat.jl")
     include("IC.jl")
     include("marIC.jl")
