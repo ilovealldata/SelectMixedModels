@@ -81,14 +81,27 @@ function conAICbc(mm::LinearMixedModel)
     if oldf ==newf
         m=mm
     else
+        retrms = filter(x->Meta.isexpr(x,:call) && x.args[1] == :|, ModelFrame(newf,mm.mf.df).terms.terms)
+        length(retrms) > 0 || return(SelectMixedModels.IC( 0.0 , Inf, "VBc", [0.0,0.0], Inf ))
         m=fit(lmm(newf,mm.mf.df))
     end
 
     Zt=MixedModels.zt(m)
     Lt=SelectMixedModels.Λ0(m)
     X=m.X.m
-    Vinv = eye(size(m)[1]) - Zt'*inv(Zt*Zt' + inv(Lt*Lt'))*Zt
     
+    try 
+        Vinv = eye(size(m)[1]) - Zt'*inv(Zt*Zt' + inv(Lt*Lt'))*Zt
+    catch 
+        Vinv = eye(size(m)[1])
+    end       
+
+    if countnz(Vinv) == size(m)[1]  
+        return(SelectMixedModels.IC( 0.0 , Inf, "VBc", [0.0,0.0], Inf ))
+    else
+        Vinv = eye(size(m)[1]) - Zt'*inv(Zt*Zt' + inv(Lt*Lt'))*Zt
+    end
+
     A= Vinv - Vinv*X*inv(X'*Vinv*X)*X'*Vinv
     rho =size(m)[1]-trace(A)
      
