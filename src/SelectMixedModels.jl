@@ -8,8 +8,10 @@ module SelectMixedModels
 
 export
     conAIC,		# Conditional AIC
+    conAICbc,   # Conditional AIC with bias correction
     marAIC,     # marginal AIC
     marBIC,     # marginal BIC
+    checkzerovar, # check zero variance and return reduced models
     lmmg,       # fit a linear mixed-effects model (LMM) 
                 # with PLSGeneral type only
     condll,     # compute conditional likelihood (LMM)
@@ -21,6 +23,7 @@ export
     include("IC.jl")
     include("marIC.jl")
     include("conAIC.jl")
+    include("conAICbc.jl")
     include("util.jl")
 
 end # module

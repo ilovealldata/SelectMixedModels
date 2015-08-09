@@ -45,3 +45,4 @@ fm8 = fit(lmm(Y ~ Dept*Service + (1|S) + (1|D), inst))
 @time conAIC(fm8)
 marAIC(fm8)
 marBIC(fm8)
+

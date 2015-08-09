@@ -5,13 +5,14 @@ function Λ0(m::LinearMixedModel)
 	for i in 1:length(m.λ)
 		nl = length(m.facs[i].pool)
 		ll = m.λ[i]
-		p = size(ll,1)
+		#p = size(ll,1)
+		p = size(ll)[1]
 		if p == 1
 			isa(ll,MixedModels.PDScalF) || error("1×1 λ section should be a PDScalF type")
 			push!(vv,ll.s .* speye(nl))
 		else
-			sfll = sparse(full(ll.ch.UL))
-		push!(vv,blkdiag([sfll for _ in 1:nl]...))
+			isa(ll, MixedModels.PDDiagF) ? sfll = sparse(full(ll.d)): sfll = sparse(full(ll.ch.UL))
+			push!(vv,blkdiag([sfll for _ in 1:nl]...))
 		end
 	end
 	Triangular(blkdiag(vv...),:L,false)
