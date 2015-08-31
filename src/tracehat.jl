@@ -43,3 +43,15 @@ function traceHat(m::LinearMixedModel)
 	rho=sumabs2(Cl.nzval)+sumabs2(vec(Cr))
 	rho
 end
+
+function vinv(m::LinearMixedModel)
+
+	Zt=MixedModels.zt(m)
+	#Λ=SelectMixedModels.Λ0(m)
+
+    L1 = cholfact(CholmodSparse(SelectMixedModels.Λ0(m).data,0),true)
+    T=solve(L1,CholmodSparse(speye(size(L1)[1]),0), CHOLMOD_A)
+	L2 = cholfact(CholmodSparse(sparse(T) + Zt *Zt'),true)
+	S = solve(L2,CholmodSparse(speye(size(L2)[1]),0), CHOLMOD_A)
+	return  speye(size(m)[1]) - Zt' * sparse(S) * Zt	
+end
