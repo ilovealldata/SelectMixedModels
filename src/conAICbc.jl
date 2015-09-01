@@ -3,7 +3,8 @@ function V0inv(m::LinearMixedModel)
     Zt=MixedModels.zt(m)
     Lt=SelectMixedModels.Λ0(m)
     X=m.X.m
-    Vinv = eye(size(m)[1]) - Zt'*inv(Zt*Zt' + inv(Lt*Lt'))*Zt
+    #Vinv = eye(size(m)[1]) - Zt'*inv(Zt*Zt' + inv(Lt*Lt'))*Zt
+    Vinv=vinv(m)
     
     return(Vinv - Vinv*X*inv(X'*Vinv*X)*X'*Vinv)
 end 
