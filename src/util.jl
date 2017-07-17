@@ -1,4 +1,4 @@
-function checkzerovar(m::LinearMixedModel)
+ function checkzerovar(m::LinearMixedModel)
     ff = deepcopy(m.f)
     # set fixed term=true, reterm=false in rhs of formula
 
